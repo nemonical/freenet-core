@@ -1,0 +1,1370 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Freenet Manual</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Freenet Manual</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>Freenet is a distributed, decentralized alternative to the centralized World
+Wide Web, designed to unleash a new era of innovation and competition, while
+protecting freedom of speech and privacy.</p>
+<p>The heart of Freenet is the <a href="https://github.com/freenet/freenet-core">Core</a>,
+which runs on users' computer, smartphone, or other devices. The Core is
+tiny, less than 5 MB, allowing it to be installed in a matter of seconds and
+is compatible with a wide range of hardware.</p>
+<p><img src="freenet_in_context.svg" alt="Freenet in Context" /></p>
+<p>Freenet is a <a href="architecture/p2p-network.html">peer-to-peer network</a>, which means
+that computers that are part of the network self-organize into a global network
+without any central authority, and the work of hosting services is distributed
+among the users.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="components-of-decentralized-software"><a class="header" href="#components-of-decentralized-software">Components of Decentralized Software</a></h1>
+<p>Delegates, contracts, and user interfaces (UIs) each serve distinct roles in the
+Freenet ecosystem. <a href="components/contracts.html">Contracts</a> control public data, or "shared
+state". <a href="components/delegates.html">Delegates</a> act as the user's agent and can store private
+data on the user's behalf, while <a href="components/ui.html">User Interfaces</a> provide an interface
+between these and the user through a web browser. UIs are distributed through
+the P2P network via contracts.</p>
+<p><img src="components/components.svg" alt="Architectural Primitives Diagram" /></p>
+<h2 id="freenet-core"><a class="header" href="#freenet-core">Freenet Core</a></h2>
+<p>The Freenet Core is the software that enables a user's computer to connect to
+the Freenet network. Its primary functions are:</p>
+<ul>
+<li>Providing a user-friendly interface to access Freenet via a web browser</li>
+<li>Host the user's <a href="components/delegates.html">delegates</a> and the private data they store</li>
+<li>Host <a href="components/contracts.html">contracts</a> and their associated data on behalf of the
+network</li>
+<li>Manage communication between contracts, delegates, and UI components</li>
+</ul>
+<p>Built with Rust, the core is designed to be compact (ideally under 5 MB),
+efficient, and capable of running on a variety of devices such as smartphones,
+desktop computers, and embedded devices.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="contracts"><a class="header" href="#contracts">Contracts</a></h2>
+<p>Freenet is essentially a global decentralized key-value store where keys are
+WebAssembly code called Contracts. Contracts are stored in the network,
+along with their data or "state". The contract controls what state is permitted
+and how it can be modified, and also how to efficiently synchronize state
+between peers.</p>
+<p>A contract's state is just a block of bytes, and can be anything from a simple
+number to a complex data structure. The contract's code defines the state's
+formatting. Even the serialization format is up to the contract, so it can be
+anything from JSON to Bincode, or a custom binary format.</p>
+<p>Network users can read a contract's state and subscribe to receive immediate
+updates if the state is modified.</p>
+<p>Contracts play a similar role in Freenet to databases and real-time
+publish-subscribe mechanisms in traditional online services, while being
+entirely decentralized, secure, and scalable.</p>
+<ul>
+<li><a href="components/contracts.html#contract-operation">Contract Operation</a>
+<ul>
+<li><a href="components/contracts.html#state-synchronization-and-merging">State synchronization and merging</a>
+<ul>
+<li><a href="components/contracts.html#fundamental-concepts">Fundamental Concepts</a></li>
+<li><a href="components/contracts.html#efficient-state-synchronization">Efficient State Synchronization</a></li>
+</ul>
+</li>
+<li><a href="components/contracts.html#blog-use-case">Blog Use Case</a></li>
+<li><a href="components/contracts.html#writing-a-contract-in-rust">Writing a Contract in Rust</a>
+<ul>
+<li><a href="components/contracts.html#the-contractinterface-trait">The <code>ContractInterface</code> Trait</a></li>
+<li><a href="components/contracts.html#flexibility-versus-convenience">Flexibility versus Convenience</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="contract-operation"><a class="header" href="#contract-operation">Contract Operation</a></h2>
+<h3 id="state-synchronization-and-merging"><a class="header" href="#state-synchronization-and-merging">State synchronization and merging</a></h3>
+<h4 id="fundamental-concepts"><a class="header" href="#fundamental-concepts">Fundamental Concepts</a></h4>
+<p>Contracts need to provide a mechanism to merge any two valid states, creating a
+new state that integrates both. This process ensures the eventual consistency of
+contract states in Freenet, a concept similar to <a href="https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type">Conflict-free Replicated Data
+Types</a>.</p>
+<p>As a very simple example, if the contract's state is a single number, then the
+contract could define the merging of two states as the maximum of the two numbers.</p>
+<p>In mathematical terms, a contract defines a <a href="https://mathworld.wolfram.com/CommutativeMonoid.html">commutative
+monoid</a> on the contract's
+state - but you can ignore this if you're not a mathematician.</p>
+<h4 id="efficient-state-synchronization"><a class="header" href="#efficient-state-synchronization">Efficient State Synchronization</a></h4>
+<p>Naively we could transfer the entire state between peers, but this would be
+inefficient for larger states. Instead, Freenet transmits only the
+difference between states.</p>
+<p>To do this a contract implements three functions:</p>
+<ul>
+<li>
+<p><code>summarize_state</code> - Returns a concise summary of the contract's
+state.</p>
+</li>
+<li>
+<p><code>get_state_delta</code> - Compares the contract's state against the summary of
+another state and returns the difference between the two, the "delta".</p>
+</li>
+<li>
+<p><code>update_state</code> - Applies a delta to the contract's state, updating it to
+bring it in sync with the other peer's contract state.</p>
+</li>
+</ul>
+<p>Contracts can implement these functions however they wish depending on the
+type of data their state contains.</p>
+<h5 id="step-by-step"><a class="header" href="#step-by-step">Step-by-step</a></h5>
+<p>PeerA and PeerB need to synchronize their states. The algorithm for efficient
+state synchronization consists of the following steps:</p>
+<ol>
+<li>
+<p><strong>Summarize State by Initiator</strong>: PeerA compiles a concise summary of its
+current state using the <code>summarize_state</code> function.</p>
+<ul>
+<li>This summary is transmitted to PeerB</li>
+</ul>
+</li>
+<li>
+<p><strong>Compare State at Receiver</strong>: PeerB uses <code>get_state_delta</code> to compare the
+summary against its own state.</p>
+<ul>
+<li>If they are different, proceed to the next step; if not, synchronization is
+complete.</li>
+</ul>
+</li>
+<li>
+<p><strong>Send Delta</strong>: If the states are different, PeerB calculates the delta and
+sends it to PeerA.</p>
+</li>
+<li>
+<p><strong>Apply Delta</strong>: PeerA applies this received delta to its state using
+<code>update_state</code>.</p>
+</li>
+<li>
+<p><strong>Reverse Synchronization</strong>: This process is repeated in the opposite direction.</p>
+</li>
+</ol>
+<p>This approach allows peers to synchronize state over the network while minimizing
+data transfer.</p>
+<h3 id="blog-use-case"><a class="header" href="#blog-use-case">Blog Use Case</a></h3>
+<p>Consider a public blog contract. The state of this contract would be the blog's
+content, including blog posts. The contract's code requires that new
+posts can only be added if they are signed by the blog's owner. The owner's
+public key is part of the contract's parameters.</p>
+<p>The contract would summarize its state by returning a list of post identifiers,
+and the state delta would be a list of new posts. The contract would apply the
+delta by appending the new posts to its list of posts. The contract may have
+a limit on the number of posts it can store, in which case it would remove old
+posts to make room for new ones.</p>
+<h3 id="writing-a-contract-in-rust"><a class="header" href="#writing-a-contract-in-rust">Writing a Contract in Rust</a></h3>
+<p>Freenet Contracts can be written in any programming language that compiles to
+WebAssembly, but as Freenet is written in Rust it is currently the best supported
+language for writing contracts.</p>
+<h4 id="the-contractinterface-trait"><a class="header" href="#the-contractinterface-trait">The <code>ContractInterface</code> Trait</a></h4>
+<p>Rust contracts implement the <a href="https://docs.rs/freenet-stdlib/latest/freenet_stdlib/prelude/trait.ContractInterface.html"><code>ContractInterface</code></a> trait, which defines the
+functions that the core calls to interact with the contract.</p>
+<pre><code class="language-rust no_run noplayground">/// # ContractInterface
+///
+/// This trait defines the core functionality for managing and updating a contract's state.
+/// Implementations must ensure that state delta updates are *commutative*. In other words,
+/// when applying multiple delta updates to a state, the order in which these updates are
+/// applied should not affect the final state. Once all deltas are applied, the resulting
+/// state should be the same, regardless of the order in which the deltas were applied.
+///
+/// Noncompliant behavior, such as failing to obey the commutativity rule, may result
+/// in the contract being deprioritized or removed from the p2p network.
+pub trait ContractInterface {
+    /// Verify that the state is valid, given the parameters.
+    fn validate_state(
+        parameters: Parameters&lt;'static&gt;,
+        state: State&lt;'static&gt;,
+        related: RelatedContracts&lt;'static&gt;,
+    ) -&gt; Result&lt;ValidateResult, ContractError&gt;;
+
+    /// Update the state to account for the new data
+    fn update_state(
+        parameters: Parameters&lt;'static&gt;,
+        state: State&lt;'static&gt;,
+        data: Vec&lt;UpdateData&lt;'static&gt;&gt;,
+    ) -&gt; Result&lt;UpdateModification&lt;'static&gt;, ContractError&gt;;
+
+    /// Generate a concise summary of a state that can be used to create deltas
+    /// relative to this state.
+    fn summarize_state(
+        parameters: Parameters&lt;'static&gt;,
+        state: State&lt;'static&gt;,
+    ) -&gt; Result&lt;StateSummary&lt;'static&gt;, ContractError&gt;;
+
+    /// Generate a state delta using a summary from the current state.
+    /// This along with [`Self::summarize_state`] allows flexible and efficient
+    /// state synchronization between peers.
+    fn get_state_delta(
+        parameters: Parameters&lt;'static&gt;,
+        state: State&lt;'static&gt;,
+        summary: StateSummary&lt;'static&gt;,
+    ) -&gt; Result&lt;StateDelta&lt;'static&gt;, ContractError&gt;;
+}</code></pre>
+<h4 id="flexibility-versus-convenience"><a class="header" href="#flexibility-versus-convenience">Flexibility versus Convenience</a></h4>
+<p>The <code>ContractInterface</code> trait is a low-level "Layer 0" API that provides direct
+access to the contract's state and parameters. This API is useful for contracts
+that require fine-grained control over their state, but can be cumbersome.</p>
+<p>Soon we will provide higher-level APIs on top of Layer 0 that will sacrifice
+some flexibility for ease of contract implementation.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="delegates"><a class="header" href="#delegates">Delegates</a></h1>
+<p>In Freenet, Delegates are software components that can act on the user's behalf.
+Think of them as a more sophisticated version of a web browser's local storage,
+with similarities to Unix "Daemons". Operating within the Freenet core on your
+device, Delegates are a secure and flexible mechanism for managing private data,
+such as cryptographic keys, tokens, and passwords, and executing complex tasks.</p>
+<p>Delegates interact with various components within Freenet, including Contracts,
+User Interfaces, and other Delegates. They can also communicate directly with
+the user, such as to request user permissions or notify the user of events.</p>
+<p>Implemented in WebAssembly and adhering to the
+<a href="https://docs.rs/freenet-stdlib/latest/freenet_stdlib/prelude/trait.DelegateInterface.html">DelegateInterface</a>
+trait, Delegates seamlessly integrate within the Freenet network, operating
+securely on your devices.</p>
+<h2 id="actor-model-and-message-passing"><a class="header" href="#actor-model-and-message-passing">Actor Model and Message Passing</a></h2>
+<p>Delegates communicate with Contracts, other Delegates, and UIs by passing
+messages, similar to the <a href="https://en.wikipedia.org/wiki/Actor_model">actor
+model</a>.</p>
+<p>The Freenet Core makes sure that for any incoming message, whether it's from
+another Delegate, a User Interface, or a Contract update, the receiver knows who
+the sender is. This allows delegates to verify the behavior of any component
+they interact with, and decide if they can be trusted.</p>
+<h2 id="delegate-use-cases"><a class="header" href="#delegate-use-cases">Delegate Use Cases</a></h2>
+<p>Delegates have a wide variety of uses:</p>
+<ul>
+<li>
+<p>A <strong>key manager delegate</strong> manages a user's private keys. Other components can
+request that this Delegate sign messages or other data on their behalf.</p>
+</li>
+<li>
+<p>An <strong>inbox delegate</strong> maintains an inbox of messages sent to the user in an
+email-like system. It retrieves messages from an inbox Contract, decrypts
+them, and stores them locally where they can be accessed by other components
+like a user interface.</p>
+</li>
+<li>
+<p>A <strong>contacts delegate</strong> manages a user's contacts. It can store and retrieve
+contact information, and can be used by other components to send messages to
+contacts.</p>
+</li>
+<li>
+<p>An <strong>alerts delegate</strong> watches for events on the network, such as a mention
+of the user's name in a discussion, and notifies the user of these events
+via an alert.</p>
+</li>
+</ul>
+<p>Moreover, Delegates can securely synchronize with identical Delegate instances
+running on other devices controlled by the user, such as a laptop, phone, or
+desktop PC. This synchronization, facilitated through a shared secret private
+key provided by the user, allows the Delegates to communicate securely, acting
+as both backups and replicas of each other through Freenet's peer-to-peer
+network.</p>
+<h2 id="similarity-to-service-workers"><a class="header" href="#similarity-to-service-workers">Similarity to Service Workers</a></h2>
+<p>Delegates have much in common with <a href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API">Service Workers</a> in
+the web browser ecosystem. Both are self-contained software modules, running
+independently of the user interface and performing complex tasks on behalf of
+the user.</p>
+<p>However, Delegates are even more powerful. While Service Workers can
+store data and interact with components within the scope of the web browser and
+its pages, Delegates can talk to other Delegates in the same device, or with
+other Delegates running elsewhere via Freenet's peer-to-peer network.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="user-interface"><a class="header" href="#user-interface">User Interface</a></h2>
+<p>On the normal web, a user might visit <code>https://gmail.com/</code>, their browser
+will download the Gmail user interface which then runs in their browser and connects back to the Gmail servers.</p>
+<p>On Freenet the user interface is downloaded from a Freenet contract, and it
+<a href="components/overview.html">interacts</a> with contracts and delegates by sending messages
+through the Freenet core.</p>
+<p><img src="components/ui_delegate_contract.svg" alt="Delegate, Contrat, and UI Diagram" /></p>
+<p>These UIs are built using web technologies such as HTML, CSS, and JavaScript,
+and are distributed over Freenet and run in a web browser. UIs can create,
+retrieve, and update contracts through a WebSocket connection to the local
+Freenet peer, as well as communicate with delegates.</p>
+<p>Because UIs run in a web browser, they can be built using any web framework,
+such as React, Angular, Vue.js, Bootstrap, and so on.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="freenet-network-topology"><a class="header" href="#freenet-network-topology">Freenet Network Topology</a></h1>
+<h2 id="small-world-network"><a class="header" href="#small-world-network">Small-World Network</a></h2>
+<p>Freenet is structured as a decentralized peer-to-peer network, based on the idea of
+a <a href="https://en.wikipedia.org/wiki/Small-world_network">small-world network</a>. This
+network topology is scalable and efficient, allowing contract state to be found
+quickly and without any reliance on a central authority.</p>
+<p><img src="architecture/p2p-network.svg" alt="Small World Network" /></p>
+<h2 id="freenet-peers"><a class="header" href="#freenet-peers">Freenet Peers</a></h2>
+<p>In Freenet, a "peer" is any computer running the <a href="https://github.com/freenet/freenet-core">Freenet
+Core</a> software. The peers are organized
+in a ring-like structure, with each peer assigned a specific numerical value
+between 0.0 and 1.0, indicating its location in the network's topology. This
+location is derived from the peer's IP address.</p>
+<h2 id="establishing-neighbor-connections"><a class="header" href="#establishing-neighbor-connections">Establishing Neighbor Connections</a></h2>
+<p>Every Freenet peer, also referred to as a node, forms two-way connections with a
+set of other peers, termed "neighbors." These connections utilize the User
+Datagram Protocol (UDP) and can do <a href="https://en.wikipedia.org/wiki/Hole_punching_(networking)">Firewall hole punching</a> when necessary. Peers manage their resource usage —
+bandwidth, memory, CPU, and storage — based on limits set by the user.</p>
+<h2 id="adaptive-behavior"><a class="header" href="#adaptive-behavior">Adaptive behavior</a></h2>
+<p>Peers keep track of their neighbor's performance and learn to prefer faster
+connections over time.</p>
+<p>Peers can also identify bad behavior by other peers like excess resource usage and
+will disconnect from them.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="intelligent-routing"><a class="header" href="#intelligent-routing">Intelligent Routing</a></h2>
+<p>Freenet's request routing mechanism plays a crucial role in the efficiency of
+the network.</p>
+<p>It is responsible for deciding which peer to route a request to when attempting
+to read, create, or modify a contract's state. The mechanism is designed to
+select the peer that can complete the request the fastest, which may not always
+be the peer closest to the contract's location - the traditional approach for
+routing in a small-world network, known as <a href="https://en.wikipedia.org/wiki/Small-world_routing#Greedy_routing">greedy
+routing</a>.</p>
+<h3 id="isotonic-regression"><a class="header" href="#isotonic-regression">Isotonic Regression</a></h3>
+<p>Freenet uses <a href="https://github.com/sanity/pav.rs">isotonic regression</a>, a method
+for estimating a monotonically increasing or decreasing function given a set of
+data, to predict the response time from a peer based on its ring distance from
+the target location of the request.</p>
+<p>This estimation is then adjusted by the average difference between the isotonic
+regression estimate and the actual response time from previous interactions with
+the peer. This process enables a form of adaptive routing that selects the peer
+with the lowest estimated response time.</p>
+<h3 id="router-initialization-and-event-handling"><a class="header" href="#router-initialization-and-event-handling">Router Initialization and Event Handling</a></h3>
+<p>When a new
+<a href="https://github.com/freenet/freenet-core/blob/main/crates/core/src/router.rs">Router</a>
+is created, it's initialized with a history of routing events. These events are
+processed to generate the initial state of the isotonic estimators. For example,
+failure outcomes and success durations are computed for each event in the
+history and used to initialize the respective estimators. The average transfer
+size is also computed from the history.</p>
+<p>The Router can add new events to its history, updating its estimators in the
+process. When a successful routing event occurs, the Router updates its response
+start time estimator, failure estimator, and transfer rate estimator based on
+the details of the event. If a failure occurs, only the failure estimator is
+updated.</p>
+<h3 id="peer-selection"><a class="header" href="#peer-selection">Peer Selection</a></h3>
+<p>To select a peer for routing a request, the Router first checks whether it has
+sufficient historical data. If not, it selects the peer with the minimum
+distance to the contract location. If it does have sufficient data, it predicts
+the outcome of routing the request to each available peer and selects the one
+with the best predicted outcome.</p>
+<h3 id="outcome-prediction"><a class="header" href="#outcome-prediction">Outcome Prediction</a></h3>
+<p>To predict the outcome of routing a request to a specific peer, the Router uses
+its isotonic estimators to predict the time to the start of the response, the
+chance of failure, and the transfer rate. These predictions are used to compute
+an expected total time for the request, with the cost of a failure being assumed
+as a multiple of the cost of success. The peer with the lowest expected total
+time is selected for routing the request.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="freenet-transport-protocol-frtp"><a class="header" href="#freenet-transport-protocol-frtp">Freenet Transport Protocol (FrTP)</a></h1>
+<p><strong>Note</strong>: This document is a work in progress and is subject to change, it is currently out-of-sync
+with the codebase and should be updated to reflect the current state of the codebase once it has
+stabilized.</p>
+<h2 id="introduction-1"><a class="header" href="#introduction-1">Introduction</a></h2>
+<p>The Freenet Transport Protocol (FrTP) is a UDP-based system designed to ensure reliable and encrypted
+message transmission. This document outlines the key elements of FrTP, including connection
+establishment, message handling, and rate limiting.</p>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<ul>
+<li><strong>Firewall Traversal</strong>: FrTP allows peers behind firewalls to establish direct connections.</li>
+<li><strong>Security</strong>: All messages are encrypted using AES128GCM, with RSA public key exchange for
+connection establishment, should effectively thwart man-in-the-middle attacks.</li>
+<li><strong>Streaming</strong>: Large messages can be streamed, meaning that a peer can start forwarding data
+before the entire message is received.</li>
+<li><strong>Covert</strong>: FrTP can run on any UDP port and FrTP packets look like random data, although more
+sophisticated analysis of packet timing and size could be used to identify FrTP traffic. FrTP
+can't be port-scanned as it won't respond to packets unless encrypted with the peer's public key.</li>
+<li><strong>Efficient</strong>: FrTP is designed to minimize bandwidth usage, with rate limiting and confirmation
+message batching.</li>
+</ul>
+<h2 id="connection-establishment"><a class="header" href="#connection-establishment">Connection Establishment</a></h2>
+<h3 id="scenario-1-both-peers-behind-nat"><a class="header" href="#scenario-1-both-peers-behind-nat">Scenario 1: Both Peers Behind NAT</a></h3>
+<p>This describes how to establish one side of a two-way connection, allowing Bob to send messages
+to Alice. The process is symmetric in the other direction.</p>
+<h4 id="actors"><a class="header" href="#actors">Actors</a></h4>
+<ul>
+<li>Alice and Bob are both peers behind firewalls.</li>
+</ul>
+<h4 id="terminology"><a class="header" href="#terminology">Terminology</a></h4>
+<ul>
+<li><code>Bob_public_key</code>: Bob's RSA public key.</li>
+<li><code>Bob_private_key</code>: Bob's RSA private key.</li>
+<li><code>Alice_inbound_symmetric_key</code>: AES128GCM symmetric key generated by Alice, used for decrypting
+inbound messages from Bob.</li>
+<li><code>hello_message(A-&gt;B)</code>: Message sent from Alice to Bob, containing <code>Alice_inbound_symmetric_key</code>
+and a u16 protocol version number, encrypted using <code>B_public_key</code>.</li>
+<li><code>hello_ack(B-&gt;A)</code>: Message sent from Bob to Alice acknowledging <code>hello_message(A-&gt;B)</code>,
+encrypted using <code>Alice_inbound_symmetric_key</code>.</li>
+</ul>
+<h4 id="steps"><a class="header" href="#steps">Steps</a></h4>
+<ol>
+<li>
+<p><strong>Key Generation</strong>: Alice generates a random AES128GCM symmetric key,
+called <code>Alice_inbound_symmetric_key</code>.</p>
+</li>
+<li>
+<p><strong>Outbound Hello Message</strong>: Alice encrypts <code>Alice_inbound_symmetric_key</code> with <code>Bob_public_key</code> and
+a u16 protocol version number with Peer B's public key, to create <code>hello_message(A-&gt;B)</code>.</p>
+</li>
+<li>
+<p><strong>Sending Outbound Hello</strong>: Alice repeatedly sends <code>hello_message(A-&gt;B)</code> every 200ms until
+a <code>hello_ack(B-&gt;A)</code> from Bob is received or a 5-second timeout occurs, indicating connection
+failure.</p>
+</li>
+<li>
+<p><strong>Receiving Inbound Hello</strong>: Bob receives <code>hello_message(A-&gt;B)</code> and decrypts it using
+<code>Bob_private_key</code>. If the protocol version is not supported, then Bob sends a <code>hello_ack(B-&gt;A)</code>
+with an error code and terminates the connection.</p>
+</li>
+<li>
+<p><strong>Hello Acknowledgement</strong>: Upon receiving <code>hello_ack(B-&gt;A)</code>, Alice stops sending <code>hello_message(A-&gt;B)</code>
+and the inbound side of the connection is established.</p>
+</li>
+<li>
+<p><strong>Unexpected Hello Messages</strong>: If Bob receives a <code>hello_message(A-&gt;B)</code> from Alice after
+it has already sent a <code>hello_ack(B-&gt;A)</code>, then it should resend the <code>hello_ack(B-&gt;A)</code> and
+otherwise ignore the message (this may occur if the initial <code>hello_ack(B-&gt;A)</code> is lost).</p>
+</li>
+</ol>
+<h3 id="scenario-2-peer-behind-nat-connects-to-gateway-peer"><a class="header" href="#scenario-2-peer-behind-nat-connects-to-gateway-peer">Scenario 2: Peer behind NAT connects to Gateway peer</a></h3>
+<h4 id="actors-1"><a class="header" href="#actors-1">Actors</a></h4>
+<ul>
+<li>Alice is a peer behind a firewall, Gateway isn't behind a firewall and is configured to act as a
+gateway peer for new peers to assimiate into the network.</li>
+</ul>
+<h4 id="terminology-1"><a class="header" href="#terminology-1">Terminology</a></h4>
+<ul>
+<li><code>Gateway_public_key</code>: Gateway's RSA public key.</li>
+<li><code>Gateway_private_key</code>: Gateway's RSA private key.</li>
+<li><code>Alice_bidirectional_symmetric_key</code>: AES128GCM symmetric key generated by Alice, used for encrypting
+and decrypting messages to/from Gateway.</li>
+</ul>
+<h4 id="steps-1"><a class="header" href="#steps-1">Steps</a></h4>
+<ol>
+<li>
+<p><strong>Key Generation</strong>: Alice generates a random AES128GCM symmetric key,
+called <code>Alice_bidrectional_symmetric_key</code>.</p>
+</li>
+<li>
+<p><strong>Outbound Hello Message</strong>: Alice encrypts <code>Alice_bidrectional_symmetric_key</code> with <code>Gateway_public_key</code> and
+a u16 protocol version number with Gateway's public key, to create <code>hello_message(A-&gt;G)</code>.</p>
+</li>
+<li>
+<p><strong>Sending Outbound Hello</strong>: Alice repeatedly sends <code>hello_message(A-&gt;B)</code> every 200ms until
+a <code>hello_ack(G-&gt;A)</code> from Gateway is received or a 5-second timeout occurs, indicating connection
+failure.</p>
+</li>
+<li>
+<p><strong>Receiving Inbound Hello</strong>: Gateway receives <code>hello_message(A-&gt;G)</code> and decrypts it using
+<code>Gateway_private_key</code>. If the protocol version is not supported, then Gateway sends a <code>hello_ack(G-&gt;A)</code>
+with an error code and terminates the connection, otherwise it sends a <code>hello_ack(G-&gt;A)</code> to Alice.</p>
+</li>
+<li>
+<p><strong>Hello Acknowledgement</strong>: Upon receiving <code>hello_ack(G-&gt;A)</code>, Alice stops sending <code>hello_message(A-&gt;G)</code>,
+and the the connection is established, Alice should use <code>Alice_bidirectional_symmetric_key</code> for
+both encryption and decryption of packets sent to and received from Gateway.</p>
+</li>
+</ol>
+<h2 id="keep-alive-protocol"><a class="header" href="#keep-alive-protocol">Keep-Alive Protocol</a></h2>
+<p>To maintain an open connection, <code>keep_alive</code> messages are exchanged every 30 seconds. A connection
+is terminated if a peer fails to receive any message within 120 seconds.</p>
+<h2 id="symmetric-message-schema"><a class="header" href="#symmetric-message-schema">Symmetric Message Schema</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub(super) struct SymmetricMessage {
+    pub packet_id: PacketId,
+    pub confirm_receipt: Vec&lt;PacketId&gt;,
+    pub payload: SymmetricMessagePayload,
+}
+
+pub(super) enum SymmetricMessagePayload {
+    AckConnection {
+        // if we successfully connected to a remote we attempt to connect to initially
+        // then we return our TransportPublicKey so they can enroute other peers to us
+        result: Result&lt;(), Cow&lt;'static, str&gt;&gt;,
+    },
+    GatewayConnection {
+        // a gateway acknowledges a connection and returns the private key to use
+        // for communication
+        key: [u8; 16],
+    },
+    ShortMessage {
+        payload: MessagePayload,
+    },
+    StreamFragment {
+        stream_id: StreamId,
+        total_length_bytes: u64, // we shouldn't allow messages larger than u32, that's already crazy big
+        fragment_number: u32,
+        payload: MessagePayload,
+    },
+    NoOp,
+}
+
+pub enum HelloError {
+    UnsupportedProtocolVersion {
+      min_supported: u16,
+      max_supported: u16,
+      your_version: u16
+    },
+}
+<span class="boring">}</span></code></pre></pre>
+<h2 id="message-handling"><a class="header" href="#message-handling">Message Handling</a></h2>
+<h3 id="dropped-and-out-of-order-messages"><a class="header" href="#dropped-and-out-of-order-messages">Dropped and Out-of-Order Messages</a></h3>
+<ul>
+<li><strong>Duplicate Detection</strong>: Messages are checked for duplicate <code>message_id</code>. Duplicates trigger
+an immediate <code>NoOperation</code> message with a reconfirmation in <code>confirm_receipt</code>.</li>
+<li><strong>Acknowledgement Timeout</strong>: Messages are resent if not acknowledged within 2 seconds
+(<code>MESSAGE_CONFIRMATION_TIMEOUT</code>).</li>
+</ul>
+<h3 id="confirmation-batching"><a class="header" href="#confirmation-batching">Confirmation Batching</a></h3>
+<ul>
+<li><strong>Batching Strategy</strong>: Receipts can be delayed up to 500ms (<code>MAX_CONFIRMATION_DELAY</code>) to enable
+batch confirmation.</li>
+<li><strong>Queue Management</strong>: Receipt queues exceeding 20 messages prompt immediate confirmation to
+prevent overflow.</li>
+</ul>
+<h2 id="message-types"><a class="header" href="#message-types">Message Types</a></h2>
+<ul>
+<li><strong>Short Messages</strong>: Contained within a single UDP packet (up to 1kb).</li>
+<li><strong>Long Messages</strong>: Split into fragments for larger payloads, enabling efficient data forwarding.</li>
+</ul>
+<h2 id="rate-limiting"><a class="header" href="#rate-limiting">Rate Limiting</a></h2>
+<ul>
+<li><strong>Initial Setup</strong>: Upstream bandwidth set 50% above desired usage to allow for traffic bursts.</li>
+<li><strong>Dynamic Adjustment</strong>: Future adaptations may use isotonic regression for optimizing bandwidth
+and packet loss
+balance.</li>
+<li><strong>Implementation</strong>: Bandwidth monitoring over 10-second windows (<code>BANDWIDTH_MEASUREMENT_WINDOW</code>).
+Exceeding limits
+triggers a 10ms sleep (<code>BANDWIDTH_CONTROL_SLEEP_DURATION</code>), with periodic reassessment.</li>
+</ul>
+<h2 id="implementation-notes"><a class="header" href="#implementation-notes">Implementation Notes</a></h2>
+<h3 id="serialization"><a class="header" href="#serialization">Serialization</a></h3>
+<ul>
+<li>Try to avoid unnecessary copies of data, especially for large messages.</li>
+<li>Ensure serialization format is robust against untrustedf data.</li>
+<li>Note that there will be nested layers of serialization, both internal to FrTP and
+by the FrTP user.</li>
+</ul>
+<p>Consider:</p>
+<ul>
+<li><a href="https://crates.io/crates/flatbuffers/">FlatBuffers</a></li>
+<li><a href="https://docs.rs/serde_bytes/latest/serde_bytes/">Serde Bytes</a></li>
+<li><a href="https://github.com/bincode-org/bincode">BinCode</a></li>
+</ul>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
+<p>The Freenet Transport Protocol provides a robust framework for secure and efficient data
+transmission. Its design considers NAT challenges, message integrity, and bandwidth management,
+ensuring reliable communication in various network conditions.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="freenet-decentralized-app-tutorial"><a class="header" href="#freenet-decentralized-app-tutorial">Freenet Decentralized App Tutorial</a></h1>
+<p>This tutorial walks you through creating and running a simple web app and a backend contract on Freenet. By the end, you’ll have:</p>
+<ul>
+<li>A <strong>web application</strong> (frontend) that runs in the browser and talks to your local Freenet node.</li>
+<li>A <strong>container contract</strong> that holds and distributes your web application over Freenet.</li>
+<li>A <strong>backend contract</strong> that stores data and provides any server-like logic.</li>
+</ul>
+<p>Use the accompanying example (<a href="https://github.com/freenet/freenet-core/tree/main/apps/freenet-email-app">freenet-email-app</a>) for reference.</p>
+<hr />
+<h2 id="1-prerequisites"><a class="header" href="#1-prerequisites">1. Prerequisites</a></h2>
+<h3 id="11-rust--cargo"><a class="header" href="#11-rust--cargo">1.1 Rust &amp; Cargo</a></h3>
+<p>Install Rust and Cargo (Linux/macOS example):</p>
+<pre><code class="language-bash">curl https://sh.rustup.rs -sSf | sh
+</code></pre>
+<blockquote>
+<p><strong>Important for macOS:</strong> Using Homebrew’s Rust can interfere with <code>fdev</code>. Use <code>rustup</code> above instead.</p>
+</blockquote>
+<h3 id="12-freenet-core--fdev-git-installation"><a class="header" href="#12-freenet-core--fdev-git-installation">1.2 Freenet Core &amp; FDev (Git Installation)</a></h3>
+<p>Freenet Core is under rapid development, so install from Git:</p>
+<pre><code class="language-bash">git clone --recurse-submodules https://github.com/freenet/freenet-core.git
+cd freenet-core/apps/freenet-ping
+</code></pre>
+<p>Then install the Freenet kernel (<code>freenet</code>) and dev tool (<code>fdev</code>):</p>
+<pre><code class="language-bash">cargo install --path ../../crates/core
+cargo install --path ../../crates/fdev
+</code></pre>
+<h3 id="13-webassembly-target"><a class="header" href="#13-webassembly-target">1.3 WebAssembly Target</a></h3>
+<p>Enable the WebAssembly target for Rust:</p>
+<pre><code class="language-bash">rustup target add wasm32-unknown-unknown
+</code></pre>
+<h3 id="14-nodejs--typescript"><a class="header" href="#14-nodejs--typescript">1.4 Node.js &amp; TypeScript</a></h3>
+<p>If you plan to build web UIs using TypeScript:</p>
+<ul>
+<li><strong>Ubuntu</strong>:
+<pre><code class="language-bash">sudo apt update
+sudo apt install nodejs npm
+</code></pre>
+</li>
+<li><strong>macOS/Windows</strong>: Install from <a href="https://nodejs.org/en/download/">Node.js downloads</a>.</li>
+</ul>
+<p>Then install TypeScript globally:</p>
+<pre><code class="language-bash">sudo npm install -g typescript
+</code></pre>
+<p>Check:</p>
+<pre><code class="language-bash">tsc --version
+</code></pre>
+<hr />
+<h2 id="2-create-your-project-structure"><a class="header" href="#2-create-your-project-structure">2. Create Your Project Structure</a></h2>
+<p>We’ll create two main pieces: a <strong>web app</strong> (which is essentially our frontend) and a <strong>backend contract</strong>.</p>
+<h3 id="21-create-a-web-app-container--frontend"><a class="header" href="#21-create-a-web-app-container--frontend">2.1 Create a Web App (Container + Frontend)</a></h3>
+<pre><code class="language-bash">mkdir -p my-app/web
+mkdir -p my-app/backend
+cd my-app/web
+fdev new web-app
+</code></pre>
+<p>This makes a skeleton for:</p>
+<ol>
+<li>A <strong>container contract</strong> in <code>./container/</code> (stores and distributes your web files).</li>
+<li>A TypeScript-based web app in <code>./src/</code>.</li>
+</ol>
+<h3 id="22-container-contract-overview"><a class="header" href="#22-container-contract-overview">2.2 Container Contract Overview</a></h3>
+<p>Open <code>my-app/web/container/src/lib.rs</code>. You’ll see something like:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use freenet_stdlib::prelude::*;
+
+struct Contract;
+
+#[contract]
+impl ContractInterface for Contract {
+    // ...
+}
+<span class="boring">}</span></code></pre></pre>
+<ul>
+<li><code>#[contract]</code> links your code to the Freenet WASM runtime.</li>
+</ul>
+<p><strong>Tip</strong>: Real container contracts typically add checks (e.g., who can update the contract).</p>
+<hr />
+<h2 id="3-frontend-web-application-basics"><a class="header" href="#3-frontend-web-application-basics">3. Frontend (Web Application) Basics</a></h2>
+<p>Your web files live under <code>my-app/web/src/</code>. A typical TypeScript setup might use <code>npm install</code> to pull in <code>@freenetorg/freenet-stdlib</code>. For example in <code>package.json</code>:</p>
+<pre><code class="language-json">{
+  "dependencies": {
+    "@freenetorg/freenet-stdlib": "0.0.6"
+  }
+}
+</code></pre>
+<p>Then in <code>src/index.ts</code>, you can import <code>@freenetorg/freenet-stdlib</code> and talk to the node:</p>
+<pre><code class="language-ts">import {
+  FreenetWsApi,
+  GetResponse,
+  HostError,
+  Key,
+  PutResponse,
+  UpdateResponse,
+  // ...
+} from "@freenetorg/freenet-stdlib/websocket-interface";
+
+const handler = {
+  onContractPut: (_: PutResponse) =&gt; {},
+  onContractGet: (_: GetResponse) =&gt; {},
+  onContractUpdate: (_: UpdateResponse) =&gt; {},
+  // ...
+  onErr: (err: HostError) =&gt; console.error(err),
+  onOpen: () =&gt; console.log("WebSocket open!"),
+};
+
+const API_URL = new URL(`ws://${location.host}/contract/command/`);
+const freenetApi = new FreenetWsApi(API_URL, handler);
+
+// Example contract key
+const CONTRACT_KEY = "DCBi7HNZC3QUZRiZLFZDiEduv5KHgZfgBk8WwTiheGq1";
+
+async function loadState() {
+  await freenetApi.get({
+    key: Key.fromSpec(CONTRACT_KEY),
+    fetch_contract: false,
+  });
+}
+</code></pre>
+<hr />
+<h2 id="4-backend-contract"><a class="header" href="#4-backend-contract">4. Backend Contract</a></h2>
+<p>Switch to your backend folder and scaffold a regular contract:</p>
+<pre><code class="language-bash">cd ../backend
+fdev new contract
+</code></pre>
+<p>Edit <code>./src/lib.rs</code>. Here’s a skeleton that stores a list of posts:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use freenet_stdlib::prelude::*;
+
+struct Contract;
+
+struct Posts(Vec&lt;Post&gt;);
+
+#[derive(Serialize, Deserialize)]
+struct Post {
+  // ...
+}
+
+#[contract]
+impl ContractInterface for Contract {
+    fn update_state(
+        _params: Parameters&lt;'static&gt;,
+        current_state: State&lt;'static&gt;,
+        mut data: Vec&lt;UpdateData&lt;'static&gt;&gt;,
+    ) -&gt; Result&lt;UpdateModification&lt;'static&gt;, ContractError&gt; {
+        // Convert the current state from JSON
+        let mut posts: Posts = serde_json::from_slice(&amp;current_state)
+          .map_err(|_| ContractError::InvalidState)?;
+
+        if let Some(UpdateData::Delta(delta)) = data.pop() {
+            // Parse the incoming update as a Post
+            let new_post: Post = serde_json::from_slice(&amp;delta)
+              .map_err(|_| ContractError::InvalidUpdate)?;
+
+            // Append to our existing posts
+            posts.0.push(new_post);
+        } else {
+            return Err(ContractError::InvalidUpdate);
+        }
+
+        // Serialize back to JSON for the updated state
+        Ok(UpdateModification::valid(serde_json::to_vec(&amp;posts)
+          .unwrap()
+          .into()))
+    }
+
+    // ...
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Any time the contract receives an update, it takes the JSON-encoded “post” and appends it to the stored list. The front end can subscribe to these updates and reflect them in the UI.</p>
+<hr />
+<h2 id="5-building--packaging"><a class="header" href="#5-building--packaging">5. Building &amp; Packaging</a></h2>
+<h3 id="51-manifest-configuration"><a class="header" href="#51-manifest-configuration">5.1 Manifest Configuration</a></h3>
+<p>Each contract folder has a <code>freenet.toml</code> specifying how to build/package. In the <strong>web container</strong> (<code>my-app/web</code>), you might see:</p>
+<pre><code class="language-toml">[contract]
+type = "webapp"
+lang = "rust"
+
+[webapp.state-sources]
+source_dirs = ["dist"]  # The compiled web files get packaged from this folder
+</code></pre>
+<p>You can embed your backend contract into the container by adding something like:</p>
+<pre><code class="language-toml">[webapp.dependencies]
+posts = { path = "../backend" }
+</code></pre>
+<h3 id="52-compile"><a class="header" href="#52-compile">5.2 Compile</a></h3>
+<p>From inside <code>my-app/web</code>:</p>
+<pre><code class="language-bash">fdev build
+</code></pre>
+<p>This runs any necessary steps (like <code>npm install</code>, <code>webpack</code>, TypeScript compilation) before creating a <code>.wasm</code> file and <code>contract-state</code> in <code>build/freenet</code>.</p>
+<p>Then do the same in <code>my-app/backend</code>:</p>
+<pre><code class="language-bash">fdev build
+</code></pre>
+<p>You should again see a <code>.wasm</code> file and optionally a <code>contract-state</code>.</p>
+<hr />
+<h2 id="6-test-locally"><a class="header" href="#6-test-locally">6. Test Locally</a></h2>
+<h3 id="61-start-the-local-freenet-node"><a class="header" href="#61-start-the-local-freenet-node">6.1 Start the Local Freenet Node</a></h3>
+<p>In one terminal:</p>
+<pre><code class="language-bash">freenet
+</code></pre>
+<p>You’ll see logs indicating the node is running (HTTP gateway on <code>127.0.0.1:50509</code> by default).</p>
+<h3 id="62-publish-contracts"><a class="header" href="#62-publish-contracts">6.2 Publish Contracts</a></h3>
+<p>In another terminal, publish both contracts:</p>
+<p><strong>Backend</strong>:</p>
+<pre><code class="language-bash">cd my-app/backend
+fdev publish --code="./build/freenet/backend.wasm" --state="./build/freenet/contract-state"
+</code></pre>
+<p><strong>Web Container</strong>:</p>
+<pre><code class="language-bash">cd ../web
+fdev publish --code="./build/freenet/web.wasm" --state="./build/freenet/contract-state"
+</code></pre>
+<h3 id="63-view-in-browser"><a class="header" href="#63-view-in-browser">6.3 View in Browser</a></h3>
+<p>You’ll get a contract key when you publish (e.g., <code>CYXGxQGSmcd5xHRJNQygPwmUJsWS2njh3pdVjfVz9EV</code>).<br />
+Open it in your browser:</p>
+<pre><code>http://127.0.0.1:50509/contract/web/&lt;CONTRACT-KEY&gt;
+</code></pre>
+<p>If everything went well, you’ll see your web application loaded from the node.</p>
+<hr />
+<h2 id="7-updating-your-app"><a class="header" href="#7-updating-your-app">7. Updating Your App</a></h2>
+<p>Since the app’s code is stored as the contract’s <strong>state</strong>, you can update it at any time by:</p>
+<ol>
+<li>Changing your TypeScript/Rust source.</li>
+<li>Rebuilding.</li>
+<li>Publishing a new version with a new state or new parameters.</li>
+</ol>
+<p>The Freenet node treats these as regular contract updates.</p>
+<hr />
+<h2 id="8-current-limitations"><a class="header" href="#8-current-limitations">8. Current Limitations</a></h2>
+<ul>
+<li><strong>No Real Network</strong>: Publishing to the production Freenet network is still under development.</li>
+<li><strong>Language Support</strong>: Currently only Rust for contracts; additional languages (e.g., AssemblyScript) planned.</li>
+<li><strong>Manual Install</strong>: Binaries for <code>fdev</code> and <code>freenet</code> require manual build from source.</li>
+</ul>
+<hr />
+<p><strong>That’s it!</strong> You’ve built a basic decentralized web app on Freenet using a container contract (for the UI) and a backend contract (for the data/logic). For a more complete example, check the <a href="https://github.com/freenet/freenet-core/tree/main/apps/freenet-email-app">freenet-email-app</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="contract-interface"><a class="header" href="#contract-interface">Contract Interface</a></h1>
+<h2 id="terms"><a class="header" href="#terms">Terms</a></h2>
+<ul>
+<li><a href="glossary.html#contract-state">Contract State</a> - data associated with a contract that can be retrieved by Applications and Delegates.</li>
+<li><a href="glossary.html#delta">Delta</a> - Represents a modification to some state - similar to a <a href="https://en.wikipedia.org/wiki/Diff">diff</a> in source code</li>
+<li><a href="glossary.html#parameters">Parameters</a> - Data that forms part of a contract along with the WebAssembly code</li>
+<li><a href="glossary.html#state-summary">State Summary</a> - A compact summary of a contract's state that can be used to create a delta</li>
+</ul>
+<h2 id="interface"><a class="header" href="#interface">Interface</a></h2>
+<p>Freenet contracts must implement the <a href="https://docs.rs/freenet-stdlib/latest/freenet_stdlib/prelude/trait.ContractInterface.html"><code>ContractInterface</code></a> trait:</p>
+<pre><code class="language-rust no_run noplayground">/// # ContractInterface
+///
+/// This trait defines the core functionality for managing and updating a contract's state.
+/// Implementations must ensure that state delta updates are *commutative*. In other words,
+/// when applying multiple delta updates to a state, the order in which these updates are
+/// applied should not affect the final state. Once all deltas are applied, the resulting
+/// state should be the same, regardless of the order in which the deltas were applied.
+///
+/// Noncompliant behavior, such as failing to obey the commutativity rule, may result
+/// in the contract being deprioritized or removed from the p2p network.
+pub trait ContractInterface {
+    /// Verify that the state is valid, given the parameters.
+    fn validate_state(
+        parameters: Parameters&lt;'static&gt;,
+        state: State&lt;'static&gt;,
+        related: RelatedContracts&lt;'static&gt;,
+    ) -&gt; Result&lt;ValidateResult, ContractError&gt;;
+
+    /// Update the state to account for the new data
+    fn update_state(
+        parameters: Parameters&lt;'static&gt;,
+        state: State&lt;'static&gt;,
+        data: Vec&lt;UpdateData&lt;'static&gt;&gt;,
+    ) -&gt; Result&lt;UpdateModification&lt;'static&gt;, ContractError&gt;;
+
+    /// Generate a concise summary of a state that can be used to create deltas
+    /// relative to this state.
+    fn summarize_state(
+        parameters: Parameters&lt;'static&gt;,
+        state: State&lt;'static&gt;,
+    ) -&gt; Result&lt;StateSummary&lt;'static&gt;, ContractError&gt;;
+
+    /// Generate a state delta using a summary from the current state.
+    /// This along with [`Self::summarize_state`] allows flexible and efficient
+    /// state synchronization between peers.
+    fn get_state_delta(
+        parameters: Parameters&lt;'static&gt;,
+        state: State&lt;'static&gt;,
+        summary: StateSummary&lt;'static&gt;,
+    ) -&gt; Result&lt;StateDelta&lt;'static&gt;, ContractError&gt;;
+}</code></pre>
+<p><a href="https://docs.rs/freenet-stdlib/latest/freenet_stdlib/prelude/struct.Parameters.html"><code>Parameters</code></a>,
+<a href="https://docs.rs/freenet-stdlib/latest/freenet_stdlib/prelude/struct.State.html"><code>State</code></a>,
+and <a href="https://docs.rs/freenet-stdlib/latest/freenet_stdlib/prelude/struct.StateDelta.html"><code>StateDelta</code></a>
+are all wrappers around simple <code>[u8]</code> byte arrays for maximum efficiency and flexibility.</p>
+<h2 id="contract-interaction"><a class="header" href="#contract-interaction">Contract Interaction</a></h2>
+<p>In the (hopefully) near future we'll be adding the ability for contracts to read each other's state while validating and updating their own, see <a href="https://github.com/freenet/freenet-core/issues/167">issue #167</a> for the latest on this.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="the-manifest-format"><a class="header" href="#the-manifest-format">The Manifest Format</a></h1>
+<p>The <code>freenet.toml</code> file for each UI component/contract is called its <em>manifest</em>.
+It is written in the <a href="https://toml.io/">TOML</a> format. Manifest files consist of
+the following sections:</p>
+<ul>
+<li><a href="./manifest.html#the-contract-section">[contract]</a> — Defines a contract.
+<ul>
+<li><a href="./manifest.html#the-type-field">type</a> — Contract type.</li>
+<li><a href="./manifest.html#the-lang-field">lang</a> — Contract source language.</li>
+<li><a href="./manifest.html#the-output_dir-field">output_dir</a> — Output path for build
+artifacts.</li>
+</ul>
+</li>
+<li><a href="./manifest.html#the-contract-section">[webapp]</a> — Configuration for UI
+component containers.</li>
+<li><a href="./manifest.html#the-state-section">[state]</a> — Optionally seed a state.</li>
+</ul>
+<h2 id="the-contract-section"><a class="header" href="#the-contract-section">The <code>[contract]</code> section</a></h2>
+<h3 id="the-type-field"><a class="header" href="#the-type-field">The <code>type</code> field</a></h3>
+<pre><code class="language-toml">[contract]
+...
+type = "webapp"
+</code></pre>
+<p>The type of the contract being packaged. Currently the following types are
+supported:</p>
+<ul>
+<li><code>standard</code>, the default type, it can be ellided. This is just a standard
+<a href="./glossary.html#contract">contract</a>.</li>
+<li><code>webapp</code>, a web app <a href="./glossary.html#container-contract">container contract</a>.
+Additionally to the container contract the UI component source will be
+compiled and packaged as the state of the contract.</li>
+</ul>
+<h3 id="the-lang-field"><a class="header" href="#the-lang-field">The <code>lang</code> field</a></h3>
+<pre><code class="language-toml">[contract]
+...
+lang = "rust"
+</code></pre>
+<p>The programming language in which the contract is written. If specified the
+build tool will compile the contract. Currently only Rust is supported.</p>
+<h3 id="the-output_dir-field"><a class="header" href="#the-output_dir-field">The <code>output_dir</code> field</a></h3>
+<pre><code class="language-toml">[contract]
+...
+output_dir = "./other/output/dir/"
+</code></pre>
+<p>An optional path to the output directory for the build artifacts. If not set the
+output will be written to the relative directory <code>./build/freenet</code> from the
+manifest file directory.</p>
+<h2 id="the-webapp-section"><a class="header" href="#the-webapp-section">The <code>[webapp]</code> section</a></h2>
+<p>An optional section, only specified in case of <code>webapp</code> contracts.</p>
+<h3 id="the-lang-field-1"><a class="header" href="#the-lang-field-1">The <code>lang</code> field</a></h3>
+<pre><code class="language-toml">[webapp]
+...
+lang =  "typescript"
+</code></pre>
+<p>The programming language in which the web application is written. Currently the
+following languages are supported:</p>
+<ul>
+<li><code>typescript</code>, requires <a href="https://www.npmjs.com/">npm</a> installed.</li>
+<li><code>javascript</code>, requires <a href="https://www.npmjs.com/">npm</a> installed.</li>
+</ul>
+<h3 id="the-metadata-field"><a class="header" href="#the-metadata-field">The <code>metadata</code> field</a></h3>
+<pre><code class="language-toml">[webapp]
+...
+metadata =  "/path/to/metadata/file"
+</code></pre>
+<p>An optional path to the metadata for the webapp, if not set the metadata will be
+empty.</p>
+<h3 id="the-webapptypescript-options-section"><a class="header" href="#the-webapptypescript-options-section">The <code>[webapp.typescript]</code> options section</a></h3>
+<p>Optional section specified in case of the the <code>typescript</code> lang.</p>
+<p>The following fields are supported:</p>
+<pre><code class="language-toml">[webapp.typescript]
+webpack =  true
+</code></pre>
+<ul>
+<li><code>webpack</code> — if set webpack will be used when packaging the contract state.</li>
+</ul>
+<h3 id="the-webappjavascript-options-section"><a class="header" href="#the-webappjavascript-options-section">The <code>[webapp.javascript]</code> options section</a></h3>
+<p>Optional section specified in case of the the <code>javascript</code> lang.</p>
+<p>The following fields are supported:</p>
+<pre><code class="language-toml">[webapp.javascript]
+webpack =  true
+</code></pre>
+<ul>
+<li><code>webpack</code> — if set webpack will be used when packaging the contract state.</li>
+</ul>
+<h3 id="the-webappstate-sources-options-section"><a class="header" href="#the-webappstate-sources-options-section">The <code>[webapp.state-sources]</code> options section</a></h3>
+<pre><code class="language-toml">[webapp.state-sources]
+source_dirs =  ["path/to/sources"]
+files = ["*/src/**.js"]
+</code></pre>
+<p>Specifies the sources for the state of the contract, this will be later on
+unpacked and accessible at the HTTP gateway from the Locutus node. Includes any
+web sources (like .html or .js files). The <code>source_dirs</code> field is a comma
+separated array of directories that should be appended to the root of the state,
+the <code>files</code> field is a comma separated array of
+<a href="https://en.wikipedia.org/wiki/Glob_(programming)">glob</a> compatible patterns
+to files that will be appendeded to the state.</p>
+<p>At least one of <code>source_dirs</code>or <code>files</code> fields are required.</p>
+<h3 id="the-webappdependencies-section"><a class="header" href="#the-webappdependencies-section">The <code>[webapp.dependencies]</code> section</a></h3>
+<pre><code class="language-toml">[webapp.dependencies]
+...
+posts = { path = "../contracts/posts" }
+</code></pre>
+<p>An optional list of contract dependencies that will be embedded and available in
+the state of the contract. Each entry under this entry represents an alias to
+the contract code, it must include a <code>path</code> field that specifies the relative
+location of the dependency from this manifesto directory.</p>
+<p>If dependencies are specified they will be compiled and appended to the contract
+state, under the <code>contracts</code> directory, and as such, become available from the
+HTTP gateway. A <code>dependencies.json</code> file will be automatically generated and
+placed under such directory that maps the aliases to the file and hash of the
+code generated for the dependencies.</p>
+<p>In this way the "parent" container contract can use those contracts code to
+put/update new values through the websocket API in an ergonomic manner.</p>
+<h2 id="the-state-section"><a class="header" href="#the-state-section">The <code>[state]</code> section</a></h2>
+<pre><code class="language-toml">[state]
+files = ["*/src/**.js"]
+</code></pre>
+<p>An optional section for standard contracts in case they want to seed an state
+initially, it will take a single file and make it available at the build
+directory.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="example-antiflood-token-system"><a class="header" href="#example-antiflood-token-system">Example: Antiflood Token System</a></h1>
+<h2 id="purpose"><a class="header" href="#purpose">Purpose</a></h2>
+<p>The Antiflood Token System (AFT) is a decentralized system aimed to provide a
+simple, but general purpose solution to flooding, denial-of-service attacks,
+and spam.</p>
+<p>AFT allows users to generate tokens through a "token generator", which is
+created by completing a "hard" task, such as making a donation to Freenet.
+Tokens are generated at a fixed rate and can be utilized to perform activities,
+such as sending messages.</p>
+<p>The recipient can specify the required token "tier," with each tier being
+generated at different intervals (e.g. 1 minute, 1 hour). This way, if a
+recipient experiences a high volume of messages, they can increase the token
+tier to make it more challenging to generate, thus reducing the flood.</p>
+<h2 id="aft-delegate"><a class="header" href="#aft-delegate">AFT Delegate</a></h2>
+<p>The AFT relies on a
+<a href="https://github.com/freenet/freenet-core/blob/f1c8075e173f171c17ffa8d08803b2c9aea4ddf3/modules/antiflood-tokens/components/token-generator/src/lib.rs#L17">TokenDelegate</a>
+that implements this DelegateInterface.</p>
+<h4 id="token-generator"><a class="header" href="#token-generator">Token Generator</a></h4>
+<p>The
+<a href="https://github.com/freenet/freenet-core/blob/f1c8075e173f171c17ffa8d08803b2c9aea4ddf3/modules/antiflood-tokens/contracts/token-allocation-record/src/lib.rs#L10">TokenAllocContract</a>
+keeps track of token assignments to ensure that tokens are not double spent.
+New tokens are generated at a fixed rate that depends on the tier required by
+the recipient.</p>
+<h4 id="recepient-inbox"><a class="header" href="#recepient-inbox">Recepient Inbox</a></h4>
+<p>The recipient inbox contract keeps track of inbound messages sent to a
+recipient, verifying that each is accompanied by a valid token of the required
+tier.</p>
+<h2 id="sequence-diagram"><a class="header" href="#sequence-diagram">Sequence Diagram</a></h2>
+<pre class="mermaid">sequenceDiagram
+  participant User
+  participant Application
+  participant Delegate
+  participant TokenGeneratorContract
+  participant RecipientInboxContract
+
+  User-&gt;&gt;Application: 1. RequestToken
+  Application-&gt;&gt;Delegate: 2. RequestToken
+  Delegate-&gt;&gt;User: 3. Allocate?
+  User-&gt;&gt;Delegate: 4. approved
+  Delegate-&gt;&gt;TokenGeneratorContract: 5. TokenAllocation
+  Delegate-&gt;&gt;RecipientInboxContract: 6. Message+TokenAllocation
+  RecipientInboxContract-&gt;&gt;TokenGeneratorContract: 7. verify
+  TokenGeneratorContract-&gt;&gt;RecipientInboxContract: 8. verified
+</pre>
+<ol>
+<li>
+<p>User requests a token from the application, perhaps by composing a message
+and clicking "send" in the UI</p>
+</li>
+<li>
+<p>The application requests a token from the delegate via its websocket
+connection to the Freenet node</p>
+</li>
+<li>
+<p>The delegate requests permission from the user to allocate a token, this
+occurs independently of the application, perhaps via an OS-specific
+notification mechanism</p>
+</li>
+<li>
+<p>The user approves the allocation</p>
+</li>
+<li>
+<p>The delegate allocates a token to the token generator contract</p>
+</li>
+<li>
+<p>The delegate sends the message and token allocation to the recipient inbox
+contract</p>
+</li>
+<li>
+<p>The recipient inbox contract verifies that the token allocation is valid
+before appending the inbound message to its state</p>
+</li>
+<li>
+<p>The token generator contract verifies that the token allocation is valid and
+adds it to its list of allocations</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="blind-attestations"><a class="header" href="#blind-attestations">Blind Attestations</a></h1>
+<h2 id="overview-1"><a class="header" href="#overview-1">Overview</a></h2>
+<p>A mechanism to attest the owner of a "target" contract performed some action,
+while preserving the owner's anonymity using a <a href="https://en.wikipedia.org/wiki/Blind_signature">blind
+signature</a>.</p>
+<p>A typical use would be for the Freenet non-profit to attest that the owner of a
+particular contract made a donation to project. The owner can then use this
+attestation to prove they made a donation, without revealing their identity to
+Freenet or anyone else.</p>
+<p>This contract could then be thought to have a value of the donation amount,
+this could then serve as collateral to secure a transaction with a
+counterparty, such as a purchase or a loan.</p>
+<p>To do this, the contract would allow the contract owner to temporarily give the
+counterparty the ability to "disable" the contract for a mutually agreed period
+of time. The parties then conduct their transaction. If the counterparty is
+dissatisfied with the transaction then they can disable the contract as
+punishment, during which time it cannot be used.</p>
+<h2 id="attestation"><a class="header" href="#attestation">Attestation</a></h2>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let contract_key = // The contract which we want Freenet to attest to
+let (blinded_attestation_request, blind_key) = BlindAttestationRequest::blind(
+    &amp;mut rng,
+    &amp;contract_key,
+);
+<span class="boring">}</span></code></pre></pre>
+<p>The contract owner then sends the blinded attestation request to Freenet:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// URL is https://freenet.org/attestation?blinded_contract_key=4F6oPq...
+open_in_browser(&amp;blinded_attestation_request.to_url());
+<span class="boring">}</span></code></pre></pre>
+<p>The user then follows the instructions on freenet.org to complete the donation.
+Once the donation is complete, freenet.org signs the blinded_contract_key and
+sends the attestation response through a response contract in Freenet. This
+may also be sent via a browser redirect to the application.</p>
+<p>The attestation consists of:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>struct Attestation {
+    pub signature : Signature,
+    pub authorization : Authorization,
+    pub authorization_sig : Signature,
+
+    ///
+    fn is_valid(&amp;self) -&gt; Result&lt;Authorization, String&gt; {
+        if (!signature.verify(&amp;authorization.pubkey, &amp;self.target)) {
+            return Err("The target's signature is invalid");
+        }
+
+        if (!authorization_sig.verify(&amp;freenet_public_key, &amp;self.authorization)) {
+            return Err("The authorization's signature is invalid");
+        }
+
+        Ok(self.authorization)
+    }
+}
+
+enum Authorization {
+    FreenetDonation(pubkey : PublicKey, amount_range : (Money, Money), time_range : (Timestamp, Timestamp)),
+}
+
+enum Target {
+    Contract(ContractKey),
+}
+<span class="boring">}</span></code></pre></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="community"><a class="header" href="#community">Community</a></h1>
+<ul>
+<li><a href="https://github.com/freenet/freenet-core">Github</a></li>
+<li><a href="https://matrix.to/#/#locutus:matrix.org">Matrix</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="glossary"><a class="header" href="#glossary">Glossary</a></h1>
+<h2 id="application"><a class="header" href="#application">Application</a></h2>
+<p>Software that uses Freenet as a back-end. This includes native software
+distributed independenly of Freenet but which uses Freenet as a back-end
+(perhaps bundling Freenet), and <a href="glossary#web-application">web applications</a>
+that are distributed over Freenet and run in a web browser.</p>
+<h2 id="contract"><a class="header" href="#contract">Contract</a></h2>
+<p>A contract is WebAssembly code with associated data like the contract state. The
+role of the contract is to determine:</p>
+<ul>
+<li>Is the state valid for this contract?</li>
+<li>Under what circumstances can the state be modified or updated? (see Delta)</li>
+<li>How can two valid states be merged to produce a third valid state?</li>
+</ul>
+<h2 id="container-contract"><a class="header" href="#container-contract">Container Contract</a></h2>
+<p>A contract that contains an application or component as state, accessed through
+the web proxy.</p>
+<p>For example, if the contract id is
+<code>6C2KyVMtqw8D5wWa8Y7e14VmDNXXXv9CQ3m44PC9YbD2</code> then visiting
+<code>http://localhost:PORT/contract/web/6C2KyVMtqw8D5wWa8Y7e14VmDNXXXv9CQ3m44PC9YbD2</code>
+will cause the application/component to be retrieved from Freenet, decompressed,
+and sent to the browser where it can execute.</p>
+<h2 id="contract-state"><a class="header" href="#contract-state">Contract State</a></h2>
+<p>Data associated with a contract that can be retrieved by Applications and
+Components. For efficiency and flexibility, contract state is represented as a
+simple <code>[u8]</code> byte array.</p>
+<h2 id="delegate"><a class="header" href="#delegate">Delegate</a></h2>
+<p>A delegate is a piece of software that runs on the user's computer and acts on
+the user's behalf. Similar to local storage in a web browser, delegates can
+store private data on the user's computer and control how it is used. Delegates
+can also interact with contracts, applications, and other delegates.</p>
+<h2 id="delta"><a class="header" href="#delta">Delta</a></h2>
+<p>Represents a modification to some state - similar to a
+<a href="https://en.wikipedia.org/wiki/Diff">diff</a> in source code. The exact format of a
+delta is determined by the contract. A contract will determine whether a delta
+is valid - perhaps by verifying it is signed by someone authorized to modify the
+contract state. A delta may be created in response to a <a href="glossary.html#state-summary">State
+Summary</a> as part of the <a href="glossary.html#state-synchronization">State
+Synchronization</a> mechanism.</p>
+<h2 id="parameters"><a class="header" href="#parameters">Parameters</a></h2>
+<p>Data that forms part of a contract along with the WebAssembly code. This is
+supplied to the contract as a parameter to the contract's functions. Parameters
+are typically be used to configure a contract, much like the parameters of a
+constructor function.</p>
+<p>For example, the parameters could contain a hash of the state itself. The
+contract would then use it to verify that the state hashes to that value. This
+would create a contract that is guaranteed to contain the same state. In the
+original Freenet, this was known as a <a href="http://justsolve.archiveteam.org/wiki/Content_Hash_Key_(Freenet)">content hash
+key</a>.</p>
+<h2 id="state-summary"><a class="header" href="#state-summary">State Summary</a></h2>
+<p>Given a contract state, this is a small piece of data that can be used to
+determine a <a href="glossary.html#delta">delta</a> between two contracts as part of the
+<a href="glossary.html#state-synchronization">state synchronization</a> mechanism. The format
+of a state summary is determined by the state's contract.</p>
+<h2 id="state-synchronization"><a class="header" href="#state-synchronization">State Synchronization</a></h2>
+<p>Given two valid states for a contract, the state synchronization mechanism
+allows the states to be efficiently merged over the network to ensure <a href="https://en.wikipedia.org/wiki/Eventual_consistency">eventual
+consistency</a>.</p>
+<h2 id="web-application"><a class="header" href="#web-application">Web Application</a></h2>
+<p>Software built on Freenet and distributed through Freenet.</p>
+<p>Applications run in the browser and can be built with tools like React,
+TypeScript, and Vue.js. An application may use multiple components and
+<a href="glossary.html#contract">contracts</a>.</p>
+<p>Applications are compressed and distributed via a <a href="glossary.html#container-contract">container
+contract</a>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="mermaid.min.js"></script>
+        <script src="mermaid-init.js"></script>
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>

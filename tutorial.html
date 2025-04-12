@@ -1,0 +1,447 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Tutorial: Create an App - Freenet Manual</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="highlight-css" href="highlight.css">
+        <link rel="stylesheet" id="tomorrow-night-css" href="tomorrow-night.css">
+        <link rel="stylesheet" id="ayu-highlight-css" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Freenet Manual</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="freenet-decentralized-app-tutorial"><a class="header" href="#freenet-decentralized-app-tutorial">Freenet Decentralized App Tutorial</a></h1>
+<p>This tutorial walks you through creating and running a simple web app and a backend contract on Freenet. By the end, you’ll have:</p>
+<ul>
+<li>A <strong>web application</strong> (frontend) that runs in the browser and talks to your local Freenet node.</li>
+<li>A <strong>container contract</strong> that holds and distributes your web application over Freenet.</li>
+<li>A <strong>backend contract</strong> that stores data and provides any server-like logic.</li>
+</ul>
+<p>Use the accompanying example (<a href="https://github.com/freenet/freenet-core/tree/main/apps/freenet-email-app">freenet-email-app</a>) for reference.</p>
+<hr />
+<h2 id="1-prerequisites"><a class="header" href="#1-prerequisites">1. Prerequisites</a></h2>
+<h3 id="11-rust--cargo"><a class="header" href="#11-rust--cargo">1.1 Rust &amp; Cargo</a></h3>
+<p>Install Rust and Cargo (Linux/macOS example):</p>
+<pre><code class="language-bash">curl https://sh.rustup.rs -sSf | sh
+</code></pre>
+<blockquote>
+<p><strong>Important for macOS:</strong> Using Homebrew’s Rust can interfere with <code>fdev</code>. Use <code>rustup</code> above instead.</p>
+</blockquote>
+<h3 id="12-freenet-core--fdev-git-installation"><a class="header" href="#12-freenet-core--fdev-git-installation">1.2 Freenet Core &amp; FDev (Git Installation)</a></h3>
+<p>Freenet Core is under rapid development, so install from Git:</p>
+<pre><code class="language-bash">git clone --recurse-submodules https://github.com/freenet/freenet-core.git
+cd freenet-core/apps/freenet-ping
+</code></pre>
+<p>Then install the Freenet kernel (<code>freenet</code>) and dev tool (<code>fdev</code>):</p>
+<pre><code class="language-bash">cargo install --path ../../crates/core
+cargo install --path ../../crates/fdev
+</code></pre>
+<h3 id="13-webassembly-target"><a class="header" href="#13-webassembly-target">1.3 WebAssembly Target</a></h3>
+<p>Enable the WebAssembly target for Rust:</p>
+<pre><code class="language-bash">rustup target add wasm32-unknown-unknown
+</code></pre>
+<h3 id="14-nodejs--typescript"><a class="header" href="#14-nodejs--typescript">1.4 Node.js &amp; TypeScript</a></h3>
+<p>If you plan to build web UIs using TypeScript:</p>
+<ul>
+<li><strong>Ubuntu</strong>:
+<pre><code class="language-bash">sudo apt update
+sudo apt install nodejs npm
+</code></pre>
+</li>
+<li><strong>macOS/Windows</strong>: Install from <a href="https://nodejs.org/en/download/">Node.js downloads</a>.</li>
+</ul>
+<p>Then install TypeScript globally:</p>
+<pre><code class="language-bash">sudo npm install -g typescript
+</code></pre>
+<p>Check:</p>
+<pre><code class="language-bash">tsc --version
+</code></pre>
+<hr />
+<h2 id="2-create-your-project-structure"><a class="header" href="#2-create-your-project-structure">2. Create Your Project Structure</a></h2>
+<p>We’ll create two main pieces: a <strong>web app</strong> (which is essentially our frontend) and a <strong>backend contract</strong>.</p>
+<h3 id="21-create-a-web-app-container--frontend"><a class="header" href="#21-create-a-web-app-container--frontend">2.1 Create a Web App (Container + Frontend)</a></h3>
+<pre><code class="language-bash">mkdir -p my-app/web
+mkdir -p my-app/backend
+cd my-app/web
+fdev new web-app
+</code></pre>
+<p>This makes a skeleton for:</p>
+<ol>
+<li>A <strong>container contract</strong> in <code>./container/</code> (stores and distributes your web files).</li>
+<li>A TypeScript-based web app in <code>./src/</code>.</li>
+</ol>
+<h3 id="22-container-contract-overview"><a class="header" href="#22-container-contract-overview">2.2 Container Contract Overview</a></h3>
+<p>Open <code>my-app/web/container/src/lib.rs</code>. You’ll see something like:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use freenet_stdlib::prelude::*;
+
+struct Contract;
+
+#[contract]
+impl ContractInterface for Contract {
+    // ...
+}
+<span class="boring">}</span></code></pre></pre>
+<ul>
+<li><code>#[contract]</code> links your code to the Freenet WASM runtime.</li>
+</ul>
+<p><strong>Tip</strong>: Real container contracts typically add checks (e.g., who can update the contract).</p>
+<hr />
+<h2 id="3-frontend-web-application-basics"><a class="header" href="#3-frontend-web-application-basics">3. Frontend (Web Application) Basics</a></h2>
+<p>Your web files live under <code>my-app/web/src/</code>. A typical TypeScript setup might use <code>npm install</code> to pull in <code>@freenetorg/freenet-stdlib</code>. For example in <code>package.json</code>:</p>
+<pre><code class="language-json">{
+  "dependencies": {
+    "@freenetorg/freenet-stdlib": "0.0.6"
+  }
+}
+</code></pre>
+<p>Then in <code>src/index.ts</code>, you can import <code>@freenetorg/freenet-stdlib</code> and talk to the node:</p>
+<pre><code class="language-ts">import {
+  FreenetWsApi,
+  GetResponse,
+  HostError,
+  Key,
+  PutResponse,
+  UpdateResponse,
+  // ...
+} from "@freenetorg/freenet-stdlib/websocket-interface";
+
+const handler = {
+  onContractPut: (_: PutResponse) =&gt; {},
+  onContractGet: (_: GetResponse) =&gt; {},
+  onContractUpdate: (_: UpdateResponse) =&gt; {},
+  // ...
+  onErr: (err: HostError) =&gt; console.error(err),
+  onOpen: () =&gt; console.log("WebSocket open!"),
+};
+
+const API_URL = new URL(`ws://${location.host}/contract/command/`);
+const freenetApi = new FreenetWsApi(API_URL, handler);
+
+// Example contract key
+const CONTRACT_KEY = "DCBi7HNZC3QUZRiZLFZDiEduv5KHgZfgBk8WwTiheGq1";
+
+async function loadState() {
+  await freenetApi.get({
+    key: Key.fromSpec(CONTRACT_KEY),
+    fetch_contract: false,
+  });
+}
+</code></pre>
+<hr />
+<h2 id="4-backend-contract"><a class="header" href="#4-backend-contract">4. Backend Contract</a></h2>
+<p>Switch to your backend folder and scaffold a regular contract:</p>
+<pre><code class="language-bash">cd ../backend
+fdev new contract
+</code></pre>
+<p>Edit <code>./src/lib.rs</code>. Here’s a skeleton that stores a list of posts:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use freenet_stdlib::prelude::*;
+
+struct Contract;
+
+struct Posts(Vec&lt;Post&gt;);
+
+#[derive(Serialize, Deserialize)]
+struct Post {
+  // ...
+}
+
+#[contract]
+impl ContractInterface for Contract {
+    fn update_state(
+        _params: Parameters&lt;'static&gt;,
+        current_state: State&lt;'static&gt;,
+        mut data: Vec&lt;UpdateData&lt;'static&gt;&gt;,
+    ) -&gt; Result&lt;UpdateModification&lt;'static&gt;, ContractError&gt; {
+        // Convert the current state from JSON
+        let mut posts: Posts = serde_json::from_slice(&amp;current_state)
+          .map_err(|_| ContractError::InvalidState)?;
+
+        if let Some(UpdateData::Delta(delta)) = data.pop() {
+            // Parse the incoming update as a Post
+            let new_post: Post = serde_json::from_slice(&amp;delta)
+              .map_err(|_| ContractError::InvalidUpdate)?;
+
+            // Append to our existing posts
+            posts.0.push(new_post);
+        } else {
+            return Err(ContractError::InvalidUpdate);
+        }
+
+        // Serialize back to JSON for the updated state
+        Ok(UpdateModification::valid(serde_json::to_vec(&amp;posts)
+          .unwrap()
+          .into()))
+    }
+
+    // ...
+}
+<span class="boring">}</span></code></pre></pre>
+<p>Any time the contract receives an update, it takes the JSON-encoded “post” and appends it to the stored list. The front end can subscribe to these updates and reflect them in the UI.</p>
+<hr />
+<h2 id="5-building--packaging"><a class="header" href="#5-building--packaging">5. Building &amp; Packaging</a></h2>
+<h3 id="51-manifest-configuration"><a class="header" href="#51-manifest-configuration">5.1 Manifest Configuration</a></h3>
+<p>Each contract folder has a <code>freenet.toml</code> specifying how to build/package. In the <strong>web container</strong> (<code>my-app/web</code>), you might see:</p>
+<pre><code class="language-toml">[contract]
+type = "webapp"
+lang = "rust"
+
+[webapp.state-sources]
+source_dirs = ["dist"]  # The compiled web files get packaged from this folder
+</code></pre>
+<p>You can embed your backend contract into the container by adding something like:</p>
+<pre><code class="language-toml">[webapp.dependencies]
+posts = { path = "../backend" }
+</code></pre>
+<h3 id="52-compile"><a class="header" href="#52-compile">5.2 Compile</a></h3>
+<p>From inside <code>my-app/web</code>:</p>
+<pre><code class="language-bash">fdev build
+</code></pre>
+<p>This runs any necessary steps (like <code>npm install</code>, <code>webpack</code>, TypeScript compilation) before creating a <code>.wasm</code> file and <code>contract-state</code> in <code>build/freenet</code>.</p>
+<p>Then do the same in <code>my-app/backend</code>:</p>
+<pre><code class="language-bash">fdev build
+</code></pre>
+<p>You should again see a <code>.wasm</code> file and optionally a <code>contract-state</code>.</p>
+<hr />
+<h2 id="6-test-locally"><a class="header" href="#6-test-locally">6. Test Locally</a></h2>
+<h3 id="61-start-the-local-freenet-node"><a class="header" href="#61-start-the-local-freenet-node">6.1 Start the Local Freenet Node</a></h3>
+<p>In one terminal:</p>
+<pre><code class="language-bash">freenet
+</code></pre>
+<p>You’ll see logs indicating the node is running (HTTP gateway on <code>127.0.0.1:50509</code> by default).</p>
+<h3 id="62-publish-contracts"><a class="header" href="#62-publish-contracts">6.2 Publish Contracts</a></h3>
+<p>In another terminal, publish both contracts:</p>
+<p><strong>Backend</strong>:</p>
+<pre><code class="language-bash">cd my-app/backend
+fdev publish --code="./build/freenet/backend.wasm" --state="./build/freenet/contract-state"
+</code></pre>
+<p><strong>Web Container</strong>:</p>
+<pre><code class="language-bash">cd ../web
+fdev publish --code="./build/freenet/web.wasm" --state="./build/freenet/contract-state"
+</code></pre>
+<h3 id="63-view-in-browser"><a class="header" href="#63-view-in-browser">6.3 View in Browser</a></h3>
+<p>You’ll get a contract key when you publish (e.g., <code>CYXGxQGSmcd5xHRJNQygPwmUJsWS2njh3pdVjfVz9EV</code>).<br />
+Open it in your browser:</p>
+<pre><code>http://127.0.0.1:50509/contract/web/&lt;CONTRACT-KEY&gt;
+</code></pre>
+<p>If everything went well, you’ll see your web application loaded from the node.</p>
+<hr />
+<h2 id="7-updating-your-app"><a class="header" href="#7-updating-your-app">7. Updating Your App</a></h2>
+<p>Since the app’s code is stored as the contract’s <strong>state</strong>, you can update it at any time by:</p>
+<ol>
+<li>Changing your TypeScript/Rust source.</li>
+<li>Rebuilding.</li>
+<li>Publishing a new version with a new state or new parameters.</li>
+</ol>
+<p>The Freenet node treats these as regular contract updates.</p>
+<hr />
+<h2 id="8-current-limitations"><a class="header" href="#8-current-limitations">8. Current Limitations</a></h2>
+<ul>
+<li><strong>No Real Network</strong>: Publishing to the production Freenet network is still under development.</li>
+<li><strong>Language Support</strong>: Currently only Rust for contracts; additional languages (e.g., AssemblyScript) planned.</li>
+<li><strong>Manual Install</strong>: Binaries for <code>fdev</code> and <code>freenet</code> require manual build from source.</li>
+</ul>
+<hr />
+<p><strong>That’s it!</strong> You’ve built a basic decentralized web app on Freenet using a container contract (for the UI) and a backend contract (for the data/logic). For a more complete example, check the <a href="https://github.com/freenet/freenet-core/tree/main/apps/freenet-email-app">freenet-email-app</a>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="architecture/transport.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="contract-interface.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="architecture/transport.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="contract-interface.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="mermaid.min.js"></script>
+        <script src="mermaid-init.js"></script>
+
+
+    </div>
+    </body>
+</html>
