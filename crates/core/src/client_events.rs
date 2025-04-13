@@ -17,6 +17,8 @@ use std::sync::Arc;
 use std::{convert::Infallible, fmt::Debug};
 use tracing::Instrument;
 
+use crate::contract::ExecutorError;
+
 use serde::{Deserialize, Serialize};
 use tokio::sync::mpsc::{self, UnboundedSender};
 

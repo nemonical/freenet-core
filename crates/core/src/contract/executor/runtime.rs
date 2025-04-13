@@ -225,6 +225,31 @@ impl ContractExecutor for Executor<Runtime> {
         }
         Ok(())
     }
+
+    async fn delegate_request(
+        &mut self,
+        op: DelegateRequest<'static>,
+        attested_instance_id: Option<&ContractInstanceId>,
+    ) -> Result<(), ExecutorError> {
+        let delegate_key = op.key();
+        let attested_id = attested_instance_id.cloned();
+        let res = self
+            .runtime
+            .run_delegate(
+                &self.state_store,
+                delegate_key.clone(),
+                op.params(),
+                attested_id,
+            )
+            .await;
+        match res {
+            Ok(_) => Ok(()),
+            Err(err) => Err(ExecutorError::execution(
+                err,
+                Some(InnerOpError::Delegate(delegate_key.clone())),
+            )),
+        }
+    }
 }
 
 impl Executor<Runtime> {

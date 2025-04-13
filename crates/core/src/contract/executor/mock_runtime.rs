@@ -118,6 +118,16 @@ impl ContractExecutor for Executor<MockRuntime> {
     ) -> Result<(), Box<RequestError>> {
         Ok(())
     }
+
+    async fn delegate_request(
+        &mut self,
+        _op: DelegateRequest<'static>,
+        _attested_instance_id: Option<&ContractInstanceId>,
+    ) -> Result<(), ExecutorError> {
+        // Mock implementation: For now, just return Ok.
+        // In the future, we might want to add mock logic here.
+        Ok(())
+    }
 }
 
 #[cfg(test)]
