@@ -345,6 +345,16 @@ pub(crate) enum ContractHandlerEvent {
         subscriber_listener: UnboundedSender<HostResult>,
     },
     RegisterSubscriberListenerResponse,
+    /// Execute a delegate operation. Requires the attested contract instance ID.
+    DelegateQuery {
+        op: DelegateRequest,
+        attested_instance_id: Option<ContractInstanceId>,
+        client_id: ClientId,
+    },
+    /// Response for a delegate operation.
+    DelegateResponse {
+        result: Result<(), ExecutorError>,
+    },
 }
 
 impl std::fmt::Display for ContractHandlerEvent {
