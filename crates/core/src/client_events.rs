@@ -756,6 +756,7 @@ pub(crate) mod test {
                                     .into(),
                                 notification_channel: None,
                                 token: None,
+                                attested_instance_id: None,
                             };
                             return Ok(res.into_owned());
                         }
@@ -848,6 +849,7 @@ pub(crate) mod test {
                                             .into(),
                                         notification_channel: None,
                                         token: None,
+                                        attested_instance_id: None,
                                     };
                                     return Ok(res.into_owned());
                                 }

@@ -5,7 +5,7 @@ use std::sync::atomic::{AtomicU64, Ordering::SeqCst};
 use std::sync::Arc;
 use std::time::Duration;
 
-use freenet_stdlib::prelude::*;
+use freenet_stdlib::{client_api::DelegateRequest, prelude::*};
 use serde::{Deserialize, Serialize};
 use tokio::sync::mpsc::{self, UnboundedReceiver, UnboundedSender};
 
@@ -423,6 +423,13 @@ impl std::fmt::Display for ContractHandlerEvent {
             ContractHandlerEvent::RegisterSubscriberListenerResponse => {
                 write!(f, "register subscriber listener response")
             }
+            ContractHandlerEvent::DelegateQuery { op, .. } => {
+                write!(f, "delegate query {{ key: {} }}", op.key())
+            }
+            ContractHandlerEvent::DelegateResponse { result } => match result {
+                Ok(_) => write!(f, "delegate response {{ Ok }}"),
+                Err(e) => write!(f, "delegate response {{ Err: {e} }}"),
+            },
         }
     }
 }

@@ -471,6 +471,12 @@ pub(crate) trait ContractExecutor: Send + 'static {
         notification_ch: tokio::sync::mpsc::UnboundedSender<HostResult>,
         summary: Option<StateSummary<'_>>,
     ) -> Result<(), Box<RequestError>>;
+
+    fn delegate_request(
+        &mut self,
+        op: DelegateRequest,
+        attested_instance_id: Option<&ContractInstanceId>,
+    ) -> impl Future<Output = Result<(), ExecutorError>> + Send;
 }
 
 /// A WASM executor which will run any contracts, delegates, etc. registered.
@@ -580,5 +586,32 @@ impl<R> Executor<R> {
             ExecutorError::other(err)
         })?;
         Ok(result)
+    }
+
+    fn delegate_request(
+        &mut self,
+        op: DelegateRequest,
+        attested_instance_id: Option<&ContractInstanceId>,
+    ) -> impl Future<Output = Result<(), ExecutorError>> + Send {
+        async move {
+            let delegate_key = op.key();
+            let attested_id = attested_instance_id.cloned();
+            let res = self
+                .runtime
+                .run_delegate(
+                    &self.state_store,
+                    delegate_key.clone(),
+                    op.parameters(),
+                    attested_id,
+                )
+                .await;
+            match res {
+                Ok(_) => Ok(()),
+                Err(err) => Err(ExecutorError::execution(
+                    err,
+                    Some(InnerOpError::Delegate(delegate_key)),
+                )),
+            }
+        }
     }
 }
