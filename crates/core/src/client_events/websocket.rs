@@ -46,6 +46,7 @@ impl std::ops::Deref for WebSocketRequest {
 pub(crate) struct WebSocketProxy {
     proxy_server_request: mpsc::Receiver<ClientConnection>,
     response_channels: HashMap<ClientId, mpsc::UnboundedSender<HostCallbackResult>>,
+    attested_contracts: AttestedContractMap,
 }
 
 const PARALLELISM: usize = 10; // TODO: get this from config, or whatever optimal way
@@ -65,6 +66,7 @@ impl WebSocketProxy {
         attested_contracts: AttestedContractMap,
     ) -> (Self, Router) {
         let (proxy_request_sender, proxy_server_request) = mpsc::channel(PARALLELISM);
+        let attested_contracts_clone = attested_contracts.clone();
 
         // Using Extension instead of with_state to avoid changing the Router's type parameter
         let router = server_routing
@@ -77,6 +79,7 @@ impl WebSocketProxy {
             WebSocketProxy {
                 proxy_server_request,
                 response_channels: HashMap::new(),
+                attested_contracts: attested_contracts_clone,
             },
             router,
         )
@@ -101,6 +104,25 @@ impl WebSocketProxy {
                 req,
                 auth_token,
             } => {
+                // Resolve attested contract instance ID from token if present
+                let attested_instance_id = if let Some(token) = &auth_token {
+                    self.attested_contracts
+                        .read()
+                        .map_err(|_| ErrorKind::FailedOperation)?
+                        .get(token)
+                        .filter(|(_instance, attested_client_id)| {
+                            // Ensure the token belongs to the client making the request
+                            *attested_client_id == client_id
+                        })
+                        .map(|(instance, _)| *instance)
+                } else {
+                    None
+                };
+                if auth_token.is_some() && attested_instance_id.is_none() {
+                    tracing::warn!(?auth_token, %client_id, "Auth token provided but did not resolve to an attested contract for this client");
+                    // Note: We still forward the request, but the core logic might reject it if attestation is required.
+                }
+
                 let open_req = match &*req {
                     ClientRequest::ContractOp(ContractRequest::Subscribe { key, .. }) => {
                         tracing::debug!(%client_id, contract = %key, "subscribing to contract");
@@ -115,7 +137,8 @@ impl WebSocketProxy {
                             .map_err(|_| ErrorKind::ChannelClosed)?;
                             OpenRequest::new(client_id, req)
                                 .with_notification(tx)
-                                .with_token(auth_token)
+                                .with_token(auth_token.clone())
+                                .with_attested_instance(attested_instance_id)
                         } else {
                             tracing::warn!("client: {client_id} not found");
                             return Err(ErrorKind::UnknownClient(client_id.into()).into());
@@ -123,7 +146,9 @@ impl WebSocketProxy {
                     }
                     _ => {
                         // just forward the request to the node
-                        OpenRequest::new(client_id, req).with_token(auth_token)
+                        OpenRequest::new(client_id, req)
+                            .with_token(auth_token.clone())
+                            .with_attested_instance(attested_instance_id)
                     }
                 };
                 Ok(Some(open_req))

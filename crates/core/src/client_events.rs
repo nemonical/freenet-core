@@ -109,6 +109,8 @@ pub struct OpenRequest<'a> {
     pub request: Box<ClientRequest<'a>>,
     pub notification_channel: Option<UnboundedSender<HostResult>>,
     pub token: Option<AuthToken>,
+    /// The contract instance attested for the client via the AuthToken, if applicable.
+    pub attested_instance_id: Option<ContractInstanceId>,
 }
 
 impl Display for OpenRequest<'_> {
@@ -135,6 +137,7 @@ impl<'a> OpenRequest<'a> {
             request,
             notification_channel: None,
             token: None,
+            attested_instance_id: None,
         }
     }
 
@@ -145,6 +148,11 @@ impl<'a> OpenRequest<'a> {
 
     pub fn with_token(mut self, token: Option<AuthToken>) -> Self {
         self.token = token;
+        self
+    }
+
+    pub fn with_attested_instance(mut self, instance_id: Option<ContractInstanceId>) -> Self {
+        self.attested_instance_id = instance_id;
         self
     }
 }
@@ -535,11 +543,32 @@ async fn process_open_request(
                     }
                 }
             }
-            ClientRequest::DelegateOp(_op) => {
-                todo!("FIXME: delegate op");
+            ClientRequest::DelegateOp(op) => {
+                // Delegates require an attested contract instance derived from the auth token.
+                let attested_instance_id = request.attested_instance_id;
+                if attested_instance_id.is_none() && request.token.is_some() {
+                    // Token was provided but didn't resolve to an attested contract
+                    tracing::warn!(cli_id = %client_id, token = ?request.token, "Delegate operation rejected: Auth token provided but not attested to a contract instance");
+                    // Consider sending an specific error back to the client
+                    return Err(Error::Op(OpError::Unauthorized));
+                } else if attested_instance_id.is_none() {
+                    tracing::warn!(cli_id = %client_id, "Delegate operation rejected: Missing attested contract instance (no valid auth token provided?)");
+                    return Err(Error::Op(OpError::Unauthorized));
+                }
+
+                tracing::debug!(cli_id = %client_id, ?attested_instance_id, "Processing delegate op");
+                // Send the delegate operation to the contract handler via the OpManager
+                op_manager
+                    .notify_contract_handler(ContractHandlerEvent::DelegateQuery {
+                        op,
+                        attested_instance_id,
+                        client_id,
+                    })
+                    .await?;
             }
             ClientRequest::Disconnect { .. } => {
-                unreachable!();
+                // Disconnect is handled upstream in client_event_handling or server::local_node
+                unreachable!("Disconnect should not reach process_open_request");
             }
             ClientRequest::NodeQueries(_) => {
                 tracing::debug!("Received node queries from user event");

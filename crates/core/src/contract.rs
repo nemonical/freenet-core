@@ -189,7 +189,42 @@ where
                         tracing::debug!(%error, "shutting down contract handler");
                     })?;
             }
-            _ => unreachable!(),
+            ContractHandlerEvent::DelegateQuery {
+                op,
+                attested_instance_id,
+                client_id: _, // client_id might be used for routing responses later if needed
+            } => {
+                let result = contract_handler
+                    .executor()
+                    .delegate_request(op, attested_instance_id.as_ref())
+                    .instrument(tracing::info_span!("delegate_request", ?attested_instance_id))
+                    .await;
+
+                if let Err(err) = &result {
+                    tracing::warn!(%err, ?attested_instance_id, "Error executing delegate op");
+                    if err.is_fatal() {
+                        todo!("Handle fatal error; reset executor");
+                    }
+                }
+
+                // Send response back to the OpManager/requester.
+                // Note: Delegate responses might not always fit the standard HostResponse model easily.
+                // For now, just confirming success/failure. The actual result might be communicated
+                // via state changes or other means depending on the delegate logic.
+                contract_handler
+                    .channel()
+                    .send_to_sender(id, ContractHandlerEvent::DelegateResponse { result })
+                    .await
+                    .map_err(|error| {
+                        tracing::debug!(%error, "shutting down contract handler");
+                        error
+                    })?;
+            }
+            // Note: DelegateResponse is handled by the OpManager when received, not here.
+            _ => {
+                tracing::warn!(?event, "Unhandled contract handler event");
+                // Consider returning an error or specific response if an unexpected event arrives
+            }
         }
     }
 }

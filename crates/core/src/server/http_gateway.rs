@@ -104,7 +104,27 @@ impl ClientEventsProxy for HttpGateway {
                         client_id,
                         req,
                         auth_token,
-                    } => return Ok(OpenRequest::new(client_id, req).with_token(auth_token)),
+                    } => {
+                        let attested_instance_id = if let Some(token) = &auth_token {
+                            self.attested_contracts
+                                .read()
+                                .map_err(|_| ErrorKind::FailedOperation)?
+                                .get(token)
+                                .filter(|(_instance, attested_client_id)| {
+                                    // Ensure the token belongs to the client making the request
+                                    *attested_client_id == client_id
+                                })
+                                .map(|(instance, _)| *instance)
+                        } else {
+                            None
+                        };
+                        if auth_token.is_some() && attested_instance_id.is_none() {
+                            tracing::warn!(?auth_token, %client_id, "Auth token provided but did not resolve to an attested contract for this client");
+                        }
+                        return Ok(OpenRequest::new(client_id, req)
+                            .with_token(auth_token)
+                            .with_attested_instance(attested_instance_id));
+                    }
                 }
             }
             tracing::warn!("Shutting down http gateway receiver");
