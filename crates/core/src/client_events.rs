@@ -551,14 +551,14 @@ async fn process_open_request(
                     tracing::warn!(cli_id = %client_id, token = ?request.token, "Delegate operation rejected: Auth token provided but not attested to a contract instance");
                     // Consider sending an specific error back to the client
                     return Err(Error::Executor(ExecutorError::request(
-                        freenet_stdlib::client_api::RequestError::AuthError(
+                        freenet_stdlib::client_api::RequestError::Unauthorized(
                             "Token provided but not attested to a contract instance".into(),
                         ),
                     )));
                 } else if attested_instance_id.is_none() {
                     tracing::warn!(cli_id = %client_id, "Delegate operation rejected: Missing attested contract instance (no valid auth token provided?)");
                     return Err(Error::Executor(ExecutorError::request(
-                        freenet_stdlib::client_api::RequestError::AuthError(
+                        freenet_stdlib::client_api::RequestError::Unauthorized(
                             "Missing attested contract instance (no valid auth token provided?)"
                                 .into(),
                         ),

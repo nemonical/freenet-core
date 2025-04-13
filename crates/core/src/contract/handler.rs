@@ -347,7 +347,7 @@ pub(crate) enum ContractHandlerEvent {
     RegisterSubscriberListenerResponse,
     /// Execute a delegate operation. Requires the attested contract instance ID.
     DelegateQuery {
-        op: DelegateRequest,
+        op: DelegateRequest<'a>,
         attested_instance_id: Option<ContractInstanceId>,
         client_id: ClientId,
     },
