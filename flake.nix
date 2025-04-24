@@ -23,12 +23,17 @@
       }: let
         # shorthand for accessing this crate's outputs
         # you can access crate outputs under `config.nci.outputs.<crate name>` (see documentation)
-        crateOutputs = config.nci.outputs."my-crate";
+        crateOutputs = config.nci.outputs."freenet-core";
       in {
         # export the crate devshell as the default devshell
         devShells.default = crateOutputs.devShell;
         # export the release package of the crate as default package
         packages.default = crateOutputs.packages.release;
+
+	nci.toolchainConfig = {
+	  channel = "stable";
+	  targets = ["wasm32-unknown-unknown"];
+	};
       };
     };
 }
