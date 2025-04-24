@@ -17,10 +17,6 @@
       path = ./.;
       depsDrvConfig.mkDerivation = commonDeps;
       drvConfig.mkDerivation = commonDeps;
-      targets = {
-        x86_64-unknown-linux-gnu.default = true;
-	wasm32-unknown-unknown.profiles = [ "all profiles" ];
-      };
     };
     # configure crates
     nci.crates.${crateName} = {};
